@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from .models import Post
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 
-
-# FBV Style
 # def index(request):
 #     # posts = Post.objects.all() # 모든 post를 다 가져온다.
 #     posts = Post.objects.all().order_by('-pk') # 모든 post를 다 가져온다. 역순으로
@@ -18,6 +16,17 @@ from django.views.generic import ListView
 #     )
 
 
+# def single_post_page(request, pk):
+#     post = Post.objects.get(pk=pk)
+#     return render(
+#         request,
+#         'blog/single_page.html',
+#         {
+#             'post' : post,
+#         }
+#     )
+
+
 class PostList(ListView):
     model = Post
     ordering = '-pk'
@@ -25,13 +34,7 @@ class PostList(ListView):
     # 자동으로 post_list.html 보여줌 따로 지정하고 싶다면 위에 코드드
 
 
+class PostDetail(DetailView):
+    model = Post
+    # template_name = 'blog/single_page.html'
 
-def single_post_page(request, pk):
-    post = Post.objects.get(pk=pk)
-    return render(
-        request,
-        'blog/single_page.html',
-        {
-            'post' : post,
-        }
-    )
