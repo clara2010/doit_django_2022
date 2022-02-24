@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Post
+from .models import Post, Category
 from django.views.generic import ListView, DetailView
 
 
@@ -30,6 +30,13 @@ from django.views.generic import ListView, DetailView
 class PostList(ListView):
     model = Post
     ordering = '-pk'
+
+    def get_context_data(self, **kwargs):
+        context = super(PostList, self).get_context_data()
+        context['categories'] = Category.objects.all()
+        context['no_category_post_count'] = Post.objects.filter(category=None).count()
+        return context
+
     # template_name = 'blog/index.html'
     # 자동으로 post_list.html 보여줌 따로 지정하고 싶다면 위에 코드드
 
