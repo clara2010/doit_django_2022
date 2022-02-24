@@ -75,7 +75,6 @@ class TestView(TestCase):
             categoires_card.text
         )
 
-
     def test_post_list_with_posts(self):
         self.assertEqual(Post.objects.count(), 3)
         response = self.client.get('/blog/')
@@ -144,7 +143,7 @@ class TestView(TestCase):
 
         # 2.2 포스트 목록 페이지와 똑같은 네비게이션 바가 있다.
         self.navbar_test(soup)
-
+        self.category_card_test(soup)
 
         # 2.3 첫 번째 포스트이 제목이 웹 브라우저 탭 타이틀에 들어 있다.
         self.assertIn(self.post_001.title, soup.title.text)
@@ -153,6 +152,7 @@ class TestView(TestCase):
         main_area = soup.find('div', id='main-area')
         post_area = main_area.find('div', id='post-area')
         self.assertIn(self.post_001.title, post_area.text)
+        self.assertIn(self.post_001.category.name, post_area.text)
 
         # 2.5 첫 번째 포스트이 작성자(author)가 포스트 영역에 있다.(아직 구현할 수 없음)
         self.assertIn(self.user_trump.username.upper(),post_area.text)
