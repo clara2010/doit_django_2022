@@ -19,6 +19,18 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 
+class Tag(models.Model):
+    # 카테고리는 유니크 해야한다
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return f'/blog/tag/{self.slug}/'
+
+
 class Post(models.Model):
     title = models.CharField(max_length=50) # 짧은내용
     hook_text = models.CharField(max_length=100, blank=True)
@@ -34,6 +46,7 @@ class Post(models.Model):
     # 카테고리가 지워지더라도 포스트가 지워지지는 않도록 ....
     # null=True : DB 안에 없어도 된다..
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
         return f'[{self.pk}] {self.title} :: {self.author}'
