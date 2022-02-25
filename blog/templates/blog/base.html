@@ -45,11 +45,11 @@
                         <ul >
                             {% for c in categories %}
                             <li>
-                                <a href="#">{{ c.name }} ({{ c.post_set.count }})</a>
+                                <a href="{{ c.get_absolute_url }}">{{ c.name }} ({{ c.post_set.count }})</a>
                             </li>
                             {% endfor %}
                             <li>
-                                <a href="#">미분류 ({{ no_category_post_count }})</a>
+                                <a href="/blog/category/no_category">미분류 ({{ no_category_post_count }})</a>
                             </li>
                         </ul>
 
