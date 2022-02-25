@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+<head>
+    <!-- bloack head_title 지정하면 그 내용 없으면 default로 clara's Website...    -->
+    <title>{% block head_title %}Blog | clara's Website{% endblock %}</title>
+    <!-- <link href="./practice.css" rel="stylesheet" type="text/css"> -->
+    <link href="{% static 'blog/bootstrap/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous"> -->
+    <script src="https://kit.fontawesome.com/6187c60b44.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+{% include 'blog/navbar.html' %}
+
+<div class="container">
+    <div class="row my-3">
+        <div class="col-12" id = "main-area">
+            {% block main_area %}
+            {% endblock %}
+        </div>
+
+
+    </div>
+
+</div>
+
+{% include 'blog/footer.html' %}
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

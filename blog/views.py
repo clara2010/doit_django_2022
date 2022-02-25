@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Post, Category, Tag
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 
 
 # def index(request):
@@ -51,6 +51,11 @@ class PostDetail(DetailView):
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
         return context
     # template_name = 'blog/single_page.html'
+
+
+class PostCreate(CreateView):
+    model = Post
+    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
 
 
 def category_page(request, slug):
