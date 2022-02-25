@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Post, Category, Tag
 from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # def index(request):
@@ -53,9 +54,18 @@ class PostDetail(DetailView):
     # template_name = 'blog/single_page.html'
 
 
-class PostCreate(CreateView):
+class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
+
+    def form_valid(self, form):
+        current_user = self.request.user
+        # 로그인 여부 체크
+        if current_user.is_authenticated :
+            form.instance.author = current_user
+            return super(PostCreate, self).form_valid(form)
+        else :
+            return redirect('/blog/')
 
 
 def category_page(request, slug):
