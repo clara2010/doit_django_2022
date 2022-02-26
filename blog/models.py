@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import os
 
+from markdownx.utils import markdown
+from markdownx.models import MarkdownxField
 
 class Category(models.Model):
     # 카테고리는 유니크 해야한다
@@ -34,7 +36,7 @@ class Tag(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=50) # 짧은내용
     hook_text = models.CharField(max_length=100, blank=True)
-    content = models.TextField()  #긴 내용
+    content = MarkdownxField()  #긴 내용
 
     #blank=True : 폼이 있을때 잘 입력됐는지 봐주는것 True로 되어 있으면 없어도 폼입력 화면에서 넘어감..
     head_image = models.ImageField(upload_to='blog/images/%Y/%m/%d/', blank=True)
@@ -59,3 +61,6 @@ class Post(models.Model):
 
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1]
+
+    def get_content_markdown(self):
+        return markdown(self.content)
