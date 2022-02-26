@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Post, Category, Tag
 from django.views.generic import ListView, DetailView, CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 # def index(request):
@@ -54,14 +54,18 @@ class PostDetail(DetailView):
     # template_name = 'blog/single_page.html'
 
 
-class PostCreate(LoginRequiredMixin, CreateView):
+class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Post
     fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
 
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.is_staff
+
     def form_valid(self, form):
         current_user = self.request.user
-        # 로그인 여부 체크
-        if current_user.is_authenticated :
+        # 로그인 여부 체크 and (staff or superuser 체크)
+        # ==> 로그인한 계정이 권한이 있는지...
+        if current_user.is_authenticated and (current_user.is_staff or current_user.is_sueruser):
             form.instance.author = current_user
             return super(PostCreate, self).form_valid(form)
         else :
