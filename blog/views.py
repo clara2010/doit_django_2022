@@ -1,5 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
+from django.utils.text import slugify
+
 from .models import Post, Category, Tag
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -69,8 +71,24 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         # ==> 로그인한 계정이 권한이 있는지...
         if current_user.is_authenticated and (current_user.is_staff or current_user.is_sueruser):
             form.instance.author = current_user
-            return super(PostCreate, self).form_valid(form)
-        else :
+            response = super(PostCreate, self).form_valid(form)
+            tags_str = self.request.POST.get('tags_str')
+
+            if tags_str:
+                tags_str = tags_str.strip()
+                tags_str = tags_str.replace(',', ';')
+                tags_list = tags_str.split(';')
+
+                for t in tags_list:
+                    t = t.strip()
+                    tag, is_tag_created = Tag.objects.get_or_create(name=t)
+                    if is_tag_created:
+                        tag.slug = slugify(t, allow_unicode=True)
+                        tag.save()
+                    self.object.tags.add(tag)
+            return response
+
+        else:
             return redirect('/blog/')
 
 
