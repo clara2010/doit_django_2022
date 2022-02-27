@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.utils.text import slugify
 
 from .forms import CommentForm
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, Comment
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404
@@ -32,7 +32,6 @@ from django.shortcuts import get_object_or_404
 #             'post' : post,
 #         }
 #     )
-
 
 class PostList(ListView):
     model = Post
@@ -189,3 +188,14 @@ def new_comment(request, pk):
     else:
         raise PermissionError
 
+
+class CommentUpdate(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+
+    # get/post 방식 구분해주는 역할. 해당포스트에서 권한이 있는지 확인가능
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user == self.get_object().author:
+            return super(CommentUpdate, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
