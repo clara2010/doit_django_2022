@@ -1,18 +1,18 @@
 {% extends 'blog/base.html' %}
 
 {% block main_area %}
-    {% if user.is_authenticated %}
-        {% if user.is_superuser or user.is_staff %}
-            <a type="button" href="/blog/create_post/" class="btn btn-info btn-sm float-right"><i class="fa-solid fa-pen"></i>&nbsp;&nbsp;New Post</a>
-        {% endif %}
-    {% endif %}
+{% if user.is_authenticated %}
+{% if user.is_superuser or user.is_staff %}
+<a type="button" href="/blog/create_post/" class="btn btn-info btn-sm float-right"><i class="fa-solid fa-pen"></i>&nbsp;&nbsp;New Post</a>
+{% endif %}
+{% endif %}
 <h1>
     Blog
     {% if category %}
-        <span class="badge badge-secondary">{{ category }}</span>
+    <span class="badge badge-secondary">{{ category }}</span>
     {% endif %}
     {% if tag %}
-        <span class="badge badge-light">
+    <span class="badge badge-light">
             <i class="fa-solid fa-tags"></i>{{ tag }} ({{tag.post_set.count}})
         </span>
     {% endif %}
@@ -29,22 +29,22 @@
 
     <div class="card-body">
         {% if p.category %}
-            <span class="badge badge-secondary float-right">{{ p.category }}</span>
+        <span class="badge badge-secondary float-right">{{ p.category }}</span>
         {% else %}
-            <span class="badge badge-secondary float-right">미분류</span>
+        <span class="badge badge-secondary float-right">미분류</span>
         {% endif %}
 
         <h2 class="card-title">{{ p.title }} </h2>
         {% if p.hook_text %}
-            <h5 class="text-muted">{{ p.hook_text }}</h5>
+        <h5 class="text-muted">{{ p.hook_text }}</h5>
         {% endif %}
         <p class="card-text">{{ p.get_content_markdown | truncatewords_html:45 | safe }}</p>
 
         {% if p.tags.exists %}
         <i class="fa-solid fa-tags"></i>
-            {% for tag in p.tags.iterator %}
-                <a href="{{ tag.get_absolute_url }}"><span class="badge badge-light">{{tag}}</span></a>
-            {% endfor %}
+        {% for tag in p.tags.iterator %}
+        <a href="{{ tag.get_absolute_url }}"><span class="badge badge-light">{{tag}}</span></a>
+        {% endfor %}
         <br/>
         <br/>
 
@@ -57,19 +57,32 @@
     </div>
 </div>
 {% endfor %}
+
 {% else %}
 <h1>아직 게시물이 없습니다.</h1>
 {% endif %}
 
-
+{% if is_paginated%}
 <!-- Pagination -->
 <ul class="pagination justify-content-center mb-4">
-    <li class="page-item">
-        <a class="page-link" href="#">&larr; Older</a>
-    </li>
-    <li class="page-item disabled">
-        <a class="page-link" href="#">Newer &rarr;</a>
-    </li>
+    {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{page_obj.next_page_number}}">&larr; Older</a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">Older</a>
+        </li>
+    {% endif %}
+    {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{page_obj.previous_page_number}}">Newer &rarr;</a>
+        </li>
+    {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">Newer</a>
+        </li>
+    {% endif %}
 </ul>
-
+{% endif %}
 {% endblock %}

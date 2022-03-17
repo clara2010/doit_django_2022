@@ -8,8 +8,6 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404
 
-
-
 # def index(request):
 #     # posts = Post.objects.all() # 모든 post를 다 가져온다.
 #     posts = Post.objects.all().order_by('-pk') # 모든 post를 다 가져온다. 역순으로
@@ -22,7 +20,6 @@ from django.shortcuts import get_object_or_404
 #
 #     )
 
-
 # def single_post_page(request, pk):
 #     post = Post.objects.get(pk=pk)
 #     return render(
@@ -33,9 +30,11 @@ from django.shortcuts import get_object_or_404
 #         }
 #     )
 
+
 class PostList(ListView):
     model = Post
     ordering = '-pk'
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(PostList, self).get_context_data()
