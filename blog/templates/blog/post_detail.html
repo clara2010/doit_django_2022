@@ -1,7 +1,7 @@
 {% extends 'blog/base.html' %}
 {% load crispy_forms_tags %}
 {% block head_title %}
-    {{ post.title }} | Blog
+{{ post.title }} | Blog
 {% endblock %}
 
 {% block main_area %}
@@ -79,47 +79,80 @@
         <h5 class="card-header">Leave a Comment:</h5>
         <div class="card-body">
             {% if user.is_authenticated %}
-                <form id="comment-form" method="POST" action="{{ post.get_absolute_url }}new_comment/" >
-                    {% csrf_token %}
-                    <div class="form-group">
-                        {{ comment_form | crispy }}
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+            <form id="comment-form" method="POST" action="{{ post.get_absolute_url }}new_comment/" >
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ comment_form | crispy }}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
             {% else %}
-                <a role="button" type="button" class="btn btn-outline-dark btn-block btn-sm" href="#" data-toggle="modal" data-target="#loginModal">Log in and leave a comment</a>
+            <a role="button" type="button" class="btn btn-outline-dark btn-block btn-sm" href="#" data-toggle="modal" data-target="#loginModal">Log in and leave a comment</a>
             {% endif %}
 
         </div>
     </div>
 
     {% if post.comment_set.exists %}
-        {% for comment in post.comment_set.iterator %}
-        <!-- Single Comment -->
-        <div class="media mb-4" id="comment-{{comment.pk}}">
-            <img class="d-flex mr-3 rounded-circle" src="http://via.placeholder.com/50x50" alt="">
-            <div class="media-body">
-                {% if user.is_authenticated and comment.author == user %}
-                    <a role="button" class="btn btn-sm btn-info float-right"
-                       id="comment-{{comment.pk}}-update-btn" href="/blog/update_comment/{{comment.pk}}/">edit</a>
-                {% endif %}
-                <h5 class="mt-0">
-                    {{ comment.author.username }} &nbsp;&nbsp;<small class="text-muted">{{ comment.create_at }}</small>
-                </h5>
-                {{comment.content | linebreaks }}
-
-                <!-- 교재에 있는 방식 -->
-<!--                {% if comment.created_at != comment.updated_at %}-->
-<!--                    <p class="text-muted float-right"><small>Updated: {{comment.updated_at}}</small></p>-->
-<!--                {% endif %}-->
-
-                {% if comment.is_updated %}
-                    <p class="text-muted float-right"><small>Updated: {{comment.updated_at}}</small></p>
-                {% endif %}
+    {% for comment in post.comment_set.iterator %}
+    <!-- Single Comment -->
+    <div class="media mb-4" id="comment-{{comment.pk}}">
+        <img class="d-flex mr-3 rounded-circle" src="http://via.placeholder.com/50x50" alt="">
+        <div class="media-body ">
+            {% if user.is_authenticated and comment.author == user %}
+            <div class="float-right">
+                <a role="button" class="btn btn-sm btn-info "
+                   id="comment-{{comment.pk}}-update-btn" href="/blog/update_comment/{{comment.pk}}/">edit</a>
+                <a role="button" class="btn btn-sm btn-danger "
+                   id="comment-{{comment.pk}}-delete-btn"
+                   data-toggle="modal" data-target="#deleteCommentModal-{{comment.pk}}"
+                   href="/blog/update_comment/{{comment.pk}}/">delete</a>
 
             </div>
+            <!--Modal {{ comment.pk }}-->
+            <div class="modal fade" id="deleteCommentModal-{{comment.pk}}" tabindex="-1" aria-labelledby="deleteCommentModal-{{comment.pk}}-ModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteCommentModalLabel-{{comment.pk}}">Are You Sure?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <del>{{comment|linebreaks}}</del>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <a role="button"
+                               type="button"
+                               class="btn btn-danger"
+                               href="/blog/delete_comment/{{comment.pk}}/">
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+            <h5 class="mt-0">
+                {{ comment.author.username }} &nbsp;&nbsp;<small class="text-muted">{{ comment.create_at }}</small>
+            </h5>
+            {{comment.content | linebreaks }}
+
+            <!-- 교재에 있는 방식 -->
+            <!--                {% if comment.created_at != comment.updated_at %}-->
+            <!--                    <p class="text-muted float-right"><small>Updated: {{comment.updated_at}}</small></p>-->
+            <!--                {% endif %}-->
+
+            {% if comment.is_updated %}
+            <p class="text-muted float-right"><small>Updated: {{comment.updated_at}}</small></p>
+            {% endif %}
+
         </div>
-        {% endfor %}
+    </div>
+    {% endfor %}
     {% endif %}
 
 
